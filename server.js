@@ -7,7 +7,7 @@ console.log('my server');
 const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
-let data = require('./data/weather.json')
+let data = require('./data/weather.json');
 
 // **** USE EXPRESS ****
 // **** app === server ****
@@ -43,15 +43,15 @@ app.get('/weather', (request, response, next) => {
   try {
     let lat = request.query.lat;
     let lon = request.query.lon;
-    let searchQuery = request.searchQuery;
+    let cityName = request.query.searchQuery;
 
-    let dataToGroom = data.find(city => city.searchQuery === searchQuery);
-    let newArray = [];
-    for (let i = 0; i < dataToGroom.data.length; i++) {
-      newArray.push(new Forecast(dataToGroom.data[i]));
-    }
-    console.log(newArray);
-    response.status(200).send(newArray);
+    // let url = `https://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lat=${lat}&lon${lon}`;
+
+    let city = data.find(city => city.city_name === cityName);
+    let weatherData = city.data.map(dayObj => new Forecast(dayObj));
+
+    console.log(weatherData);
+    response.status(200).send(weatherData);
   } catch (error) {
     next(error);
   }
@@ -60,9 +60,9 @@ app.get('/weather', (request, response, next) => {
 // **** CLASS TO GROOM BULKY DATA ****
 
 class Forecast {
-  constructor(weatherObj){
-    this.date = weatherObj.datetime;
-    this.description = weatherObj.weather.description;
+  constructor(dayObj){
+    this.date = dayObj.valid_date;
+    this.description = dayObj.weather.description;
   }
 }
 
