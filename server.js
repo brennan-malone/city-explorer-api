@@ -7,7 +7,8 @@ console.log('my server');
 const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
-let data = require('./data/weather.json');
+// let data = require('./data/weather.json');
+const axios = require('axios');
 
 // **** USE EXPRESS ****
 // **** app === server ****
@@ -39,18 +40,26 @@ app.get('/hello', (request, response) => {
   response.status(200).send(`Hello ${firstName} ${lastName}! Welcome to my server`);
 });
 
-app.get('/weather', (request, response, next) => {
+app.get('/weather', async (request, response, next) => {
   try {
     let lat = request.query.lat;
     let lon = request.query.lon;
     let cityName = request.query.searchQuery;
 
-    // let url = `https://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lat=${lat}&lon${lon}`;
+    let url = `https://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lat=${lat}&lon=${lon}`;
+    console.log(url);
+    let weatherDataFromWeatherbit = await axios.get(url);
 
-    let city = data.find(city => city.city_name === cityName);
-    let weatherData = city.data.map(dayObj => new Forecast(dayObj));
+    // console.log(weatherDataFromWeatherbit);
 
-    console.log(weatherData);
+    let parsedWeatherData = weatherDataFromWeatherbit.data;
+
+    // console.log(parsedWeatherData);
+
+    let weatherData = parsedWeatherData.data.map(dayObj => new Forecast(dayObj));
+
+    // console.log(weatherData);
+
     response.status(200).send(weatherData);
   } catch (error) {
     next(error);
