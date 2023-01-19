@@ -32,22 +32,29 @@ app.get('/', (rquest, response) => {
   response.status(200).send('Welcome to my server');
 });
 
-app.get('/hello', (request, response) => {
-  console.log(request.query);
+app.get('/movies', async (request, response, next) => {
+  try {
+    let cityName = request.query.searchQuery;
 
-  let firstName = request.query.firstName;
-  let lastName = request.query.lastName;
-  response.status(200).send(`Hello ${firstName} ${lastName}! Welcome to my server`);
+    let url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&language=en-US&query=${cityName}&page=1&include_adult=false`;
+
+    let movieDataFromWeatherbit = await axios.get(url);
+    let parsedMovieData = movieDataFromWeatherbit.data;
+    let resultsArray = parsedMovieData.results.map(movieObj => new Movies(movieObj));
+
+    response.status(200).send(resultsArray);
+  } catch (error) {
+    next(error);
+  }
 });
 
 app.get('/weather', async (request, response, next) => {
   try {
     let lat = request.query.lat;
     let lon = request.query.lon;
-    let cityName = request.query.searchQuery;
 
     let url = `https://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lat=${lat}&lon=${lon}`;
-    console.log(url);
+    // console.log(url);
     let weatherDataFromWeatherbit = await axios.get(url);
 
     // console.log(weatherDataFromWeatherbit);
@@ -75,6 +82,12 @@ class Forecast {
   }
 }
 
+class Movies {
+  constructor(movieObj){
+    this.title = movieObj.title;
+    this.release = movieObj.release_date;
+  }
+}
 // **** CATCH ALL ENDPOINT
 
 app.get('*', (request, response) => {
