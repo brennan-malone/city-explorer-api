@@ -32,7 +32,7 @@ app.get('/', (rquest, response) => {
   response.status(200).send('Welcome to my server');
 });
 
-app.get('/movies', async (request, response, next) => {
+async function getMovie(request, response, next) {
   try {
     let cityName = request.query.searchQuery;
 
@@ -46,9 +46,9 @@ app.get('/movies', async (request, response, next) => {
   } catch (error) {
     next(error);
   }
-});
+}
 
-app.get('/weather', async (request, response, next) => {
+async function getWeather(request, response, next) {
   try {
     let lat = request.query.lat;
     let lon = request.query.lon;
@@ -71,7 +71,10 @@ app.get('/weather', async (request, response, next) => {
   } catch (error) {
     next(error);
   }
-});
+}
+
+app.get('/movies', getMovie);
+app.get('/weather', getWeather);
 
 // **** CLASS TO GROOM BULKY DATA ****
 
