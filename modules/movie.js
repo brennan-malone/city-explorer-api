@@ -21,6 +21,7 @@ class Movies {
   constructor(movieObj){
     this.title = movieObj.title;
     this.release = movieObj.release_date;
+    this.poster = movieObj.poster_path;
   }
 }
 
