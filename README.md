@@ -60,3 +60,15 @@ Start time: 6:00pm
 Finish time: 7:30pm
 
 Actual time needed to complete: 1hrs
+
+------------------------------------------------------------------------------------------------------------
+
+Name of feature: Made modules for each function of the backend
+
+Estimate of time needed to complete: 1hrs
+
+Start time: 5:30pm
+
+Finish time: 6:00pm
+
+Actual time needed to complete: 30mins
